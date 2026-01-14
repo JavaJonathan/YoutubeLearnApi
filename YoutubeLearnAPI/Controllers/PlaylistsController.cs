@@ -79,7 +79,7 @@ namespace YoutubeLearnAPI.Controllers
             if (playlist == null) return NotFound("Playlist not found.");
 
             var video = await _db.YoutubeVideos
-                .FirstOrDefaultAsync(v => v.Link.Equals(link, StringComparison.OrdinalIgnoreCase));
+                .FirstOrDefaultAsync(v => v.Link.ToLower().Equals(link.ToLower()));
 
             var videoAlreadyInPlaylist = await _db.PlaylistVideoMaps
                 .AnyAsync(pvm => pvm.PlaylistId == playlistId && video != null && pvm.VideoId == video.Id);

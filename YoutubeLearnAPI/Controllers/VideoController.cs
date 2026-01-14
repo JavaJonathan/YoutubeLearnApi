@@ -7,6 +7,7 @@ using YoutubeLearnAPI.Models;
 
 namespace YoutubeLearnAPI.Controllers
 {
+    // TO DO: Add ability to mark video as reviewed and keep a review history
     [ApiController]
     [Route("api/video")]
     public class VideoController : ControllerBase
@@ -72,7 +73,7 @@ namespace YoutubeLearnAPI.Controllers
                 .Take(pageSize)
                 .Select(v => new
                 {
-                    Id = v.Id,
+                    Id = v.Video.Id,
                     PlaylistId = v.PlaylistId,
                     Title = v.Video.Title,
                     Link = v.Video.Link,
@@ -80,7 +81,7 @@ namespace YoutubeLearnAPI.Controllers
                     CreatedAt = v.Video.CreatedAt,
                     CoreInsightsJson = v.Video.CoreInsights,
                     Tags = _db.VideoTagMaps
-                        .Where(m => m.VideoId == v.Id)
+                        .Where(m => m.VideoId == v.Video.Id)
                         .Join(_db.VideoTags, m => m.TagId, t => t.Id, (m, t) => new
                         {
                             t.Id,
@@ -165,6 +166,6 @@ namespace YoutubeLearnAPI.Controllers
                 .ToListAsync();
 
             return Ok(new { VideoId = videoId, Tags = updated });
-        }
+        }        
     }
 }
