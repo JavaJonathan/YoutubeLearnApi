@@ -1,6 +1,5 @@
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using System;
 using YoutubeLearnAPI.Data;
 using YoutubeLearnAPI.Models;
 
@@ -17,6 +16,21 @@ namespace YoutubeLearnAPI.Controllers
             _db = db;
         }
 
+        [HttpGet]
+        public async Task<IActionResult> GetTags()
+        {
+            var tags = await _db.VideoTags
+                .OrderBy(tag => tag.Title)
+                .Select(tag => new
+                {
+                    tag.Id,
+                    tag.Title
+                })
+                .ToListAsync();
+
+            return Ok(tags);
+        }
+
         [HttpPost]
         public async Task<IActionResult> CreateTag([FromBody] CreateTagModel request)
         {
@@ -24,7 +38,6 @@ namespace YoutubeLearnAPI.Controllers
                 return BadRequest("Tag name is required.");
 
             var tagName = request.Name.Trim();
-
             var normalizedName = tagName.ToLower();
 
             var tagAlreadyExists = await _db.VideoTags
