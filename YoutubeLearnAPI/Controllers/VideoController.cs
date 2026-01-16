@@ -73,13 +73,13 @@ namespace YoutubeLearnAPI.Controllers
                 .Take(pageSize)
                 .Select(v => new
                 {
-                    Id = v.Video.Id,
-                    PlaylistId = v.PlaylistId,
-                    Title = v.Video.Title,
-                    Link = v.Video.Link,
-                    Channel = v.Video.Channel,
-                    CreatedAt = v.Video.CreatedAt,
-                    CoreInsightsJson = v.Video.CoreInsights,
+                    v.Video.Id,
+                    v.PlaylistId,
+                    v.Video.Title,
+                    v.Video.Link,
+                    v.Video.Channel,
+                    v.Video.CreatedAt,
+                    v.Video.CoreInsights,
                     Tags = _db.VideoTagMaps
                         .Where(m => m.VideoId == v.Video.Id)
                         .Join(_db.VideoTags, m => m.TagId, t => t.Id, (m, t) => new
