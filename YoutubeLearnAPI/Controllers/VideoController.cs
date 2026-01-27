@@ -38,18 +38,16 @@ namespace YoutubeLearnAPI.Controllers
                 query = query.Where(videoMap => videoMap.PlaylistId == playlistId.Value);
             }
 
-            List<string> tagList = new List<string>();
-
-            if (tagList.Count > 0)
+            if (tags.Length > 0)
             {
                 if (!matchAllTags)
                 {
                     // any of the tags
                     query = query.Where(v =>
                         _db.VideoTagMaps
-                            .Where(m => m.VideoId == v.Id)
-                            .Join(_db.VideoTags, m => m.TagId, t => t.Id, (m, t) => t.Title)
-                            .Any(tagName => tagList.Contains(tagName))
+                            .Where(tagMap => tagMap.VideoId == v.VideoId)
+                            .Join(_db.VideoTags, map => map.TagId, tag => tag.Id, (m, t) => t.Id)
+                            .Any(tagId => tags.Contains(tagId.ToString()))
                     );
                 }
                 else
@@ -60,7 +58,7 @@ namespace YoutubeLearnAPI.Controllers
                             .Where(m => m.VideoId == v.Id)
                             .Join(_db.VideoTags, m => m.TagId, t => t.Id, (m, t) => t.Title.ToLower())
                             .Distinct()
-                            .Count(tagName => tagList.Contains(tagName)) == tagList.Count
+                            .Count(tagName => tags.Contains(tagName)) == tags.Length
                     );
                 }
             }
