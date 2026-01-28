@@ -24,6 +24,7 @@ namespace YoutubeLearnAPI.Controllers
             [FromQuery] Guid? playlistId,
             [FromQuery] string[] tags,
             [FromQuery] bool matchAllTags = false,
+            [FromQuery] string videoView = "all",
             [FromQuery] int page = 1,
             [FromQuery] int pageSize = 50)
         {
@@ -36,6 +37,17 @@ namespace YoutubeLearnAPI.Controllers
             if (playlistId.HasValue)
             {
                 query = query.Where(videoMap => videoMap.PlaylistId == playlistId.Value);
+            }
+
+            if (videoView == "learn")
+            {
+                query = query.Where(videoMap =>
+                    string.IsNullOrWhiteSpace(videoMap.Video.CoreInsights));
+            }
+            else if (videoView == "review")
+            {
+                query = query.Where(videoMap =>
+                    !string.IsNullOrWhiteSpace(videoMap.Video.CoreInsights));
             }
 
             if (tags.Length > 0)
