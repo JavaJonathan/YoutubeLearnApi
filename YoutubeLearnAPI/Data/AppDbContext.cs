@@ -41,6 +41,7 @@ public class AppDbContext : DbContext
             e.Property(x => x.Title).IsRequired().HasMaxLength(500);
             e.Property(x => x.CreatedAt).IsRequired();
             e.Property(x => x.CoreInsights).HasColumnType("nvarchar(max)");
+            e.Property(x => x.Impact);
 
             e.HasMany(x => x.PlaylistVideoMaps)
              .WithOne(x => x.Video)

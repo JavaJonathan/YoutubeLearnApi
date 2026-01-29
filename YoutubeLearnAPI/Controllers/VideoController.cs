@@ -54,7 +54,6 @@ namespace YoutubeLearnAPI.Controllers
             {
                 if (!matchAllTags)
                 {
-                    // any of the tags
                     query = query.Where(v =>
                         _db.VideoTagMaps
                             .Where(tagMap => tagMap.VideoId == v.VideoId)
@@ -64,7 +63,6 @@ namespace YoutubeLearnAPI.Controllers
                 }
                 else
                 {
-                    // must contain ALL tags
                     query = query.Where(v =>
                         _db.VideoTagMaps
                             .Where(m => m.VideoId == v.Id)
@@ -90,6 +88,7 @@ namespace YoutubeLearnAPI.Controllers
                     v.Video.Channel,
                     v.Video.CreatedAt,
                     v.Video.CoreInsights,
+                    v.Video.Impact,
                     Tags = _db.VideoTagMaps
                         .Where(m => m.VideoId == v.Video.Id)
                         .Join(_db.VideoTags, m => m.TagId, t => t.Id, (m, t) => new
@@ -176,6 +175,27 @@ namespace YoutubeLearnAPI.Controllers
                 .ToListAsync();
 
             return Ok(new { VideoId = videoId, Tags = updated });
-        }        
+        }
+
+        [HttpPost("{videoId:Guid}/impact")]
+        public async Task<IActionResult> UpdateImpact(Guid videoId, [FromBody] UpdateImpactModel request)
+        {
+            var video = await _db.YoutubeVideos.FirstOrDefaultAsync(v => v.Id == videoId);
+            if (video == null) return NotFound("Video not found.");
+
+            var impact = request.Impact;
+
+            if (impact == null || impact < 1) return BadRequest("Impact payload is invalid.");
+
+            video.Impact = impact;
+
+            await _db.SaveChangesAsync();
+
+            return Ok(new
+            {
+                video.Id,
+                video.Impact
+            });
+        }
     }
 }
