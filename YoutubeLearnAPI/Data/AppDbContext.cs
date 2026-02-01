@@ -24,6 +24,7 @@ public class AppDbContext : DbContext
             e.HasKey(x => x.Id);
             e.Property(x => x.Title).IsRequired().HasMaxLength(500);
             e.Property(x => x.CreatedAt).IsRequired();
+            e.Property(x => x.CoreInsights);
 
             // Relationship: Playlist -> PlaylistVideoMaps
             e.HasMany(x => x.PlaylistVideoMaps)

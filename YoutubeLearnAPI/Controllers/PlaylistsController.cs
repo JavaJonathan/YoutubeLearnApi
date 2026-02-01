@@ -26,7 +26,8 @@ namespace YoutubeLearnAPI.Controllers
                 {
                     p.Id,
                     p.Title,
-                    p.CreatedAt
+                    p.CreatedAt,
+                    p.CoreInsights
                 })
                 .ToListAsync();
 
@@ -262,6 +263,30 @@ namespace YoutubeLearnAPI.Controllers
             await _db.SaveChangesAsync();
 
             return Ok();
+        }
+
+        [HttpPut("{playlistId:Guid}/coreInsights")]
+        public async Task<IActionResult> UpdateCoreInsights(Guid playlistId, [FromBody] UpdatePlaylistCoreInsightsModel request)
+        {
+            if (request == null) return BadRequest("Body is required.");
+
+            var normalizedCoreInsights = string.IsNullOrWhiteSpace(request.CoreInsights)
+                ? null
+                : request.CoreInsights.Trim();
+
+            var playlist = await _db.YoutubePlaylists.FirstOrDefaultAsync(p => p.Id == playlistId);
+            if (playlist == null) return NotFound("Playlist not found.");
+
+            playlist.CoreInsights = normalizedCoreInsights;
+            await _db.SaveChangesAsync();
+
+            return Ok(new
+            {
+                playlist.Id,
+                playlist.Title,
+                playlist.CreatedAt,
+                playlist.CoreInsights
+            });
         }
     }
 }

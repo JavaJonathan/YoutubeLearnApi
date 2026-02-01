@@ -5,6 +5,7 @@
         public Guid Id { get; set; }
         public string Title { get; set; } = string.Empty;
         public DateTime CreatedAt { get; set; }
+        public string? CoreInsights { get; set; }
         public ICollection<PlaylistVideoMap> PlaylistVideoMaps { get; set; } = new List<PlaylistVideoMap>();
     }
 }
